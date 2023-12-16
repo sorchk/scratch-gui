@@ -75,11 +75,13 @@ const extractFirstMatchingFile = (filter, relativeDestDir, zipBuffer) => new Pro
         reject(error);
     }
 });
-
+import pkg from 'https-proxy-agent';
+const {HttpsProxyAgent} = pkg;
 const downloadMicrobitHex = async () => {
+    const proxy = {agent: new HttpsProxyAgent('http://127.0.0.1:1082')};
     const url = 'https://downloads.scratch.mit.edu/microbit/scratch-microbit.hex.zip';
     console.info(`Downloading ${url}`);
-    const response = await crossFetch(url);
+    const response = await crossFetch(url, proxy);
     const zipBuffer = Buffer.from(await response.arrayBuffer());
     const relativeHexDir = path.join('static', 'microbit');
     const hexFileName = await extractFirstMatchingFile(
